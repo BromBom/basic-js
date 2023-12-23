@@ -15,6 +15,7 @@ const chainMaker = {
     throw new NotImplementedError('Not implemented');
     // remove line with error and write your code here
     let strValue = value;
+    // if (typeof strValue.constructor.name !== 'string') {
     if (typeof strValue !== 'string') {
       strValue = JSON.stringify(strValue.toString());
     }
