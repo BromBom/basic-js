@@ -14,37 +14,33 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 function transform(arr) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+  if (!(arr instanceof Array)) throw new Error("'arr' parameter must be an instance of the Array!");
   if (arr.length === 0) return [];
-  if ((arr.flat(Infinity).length === 0) || (arr.constructor.name !== 'Array') || (!arr)) {
-    throw new TypeError("'arr' parameter must be an instance of the Array!");
-  }
 
-  const arrMod = arr.slice();
+  const arrNew = [...arr];
+  const result = [];
 
-  if ((arr instanceof Array) && (Array.isArray(arr)) && (arr.length !== 0)) {
-    const res = arrMod.flatMap((el, i, a) => {
-      if ((a[i - 1] === '--discard-next') && (a[i + 1] === '--double-prev')) return [];
-      if ((a[i - 1] === '--double-next') && (a[i + 1] === '--double-prev')) return [el, el, el];
-      if ((a[i - 1] === '--double-next') && (a[i + 1] === '--discard-prev')) return [el];
-      if (a[i + 1] === '--discard-prev') return [];
-      if (a[i - 1] === '--double-next') return [el, el];
-      if (a[i + 1] === '--double-prev') return [el, el];
-
-      if (el.toString().startsWith('-')) return [];
-
-      return el;
-    });
-
-    if (res.flat(Infinity).length === 0) {
-      throw new TypeError("'arr' parameter must be an instance of the Array!");
-    } else {
-      return res;
+  for (let i = 0; i < arrNew.length; i++) {
+    switch (arrNew[i]) {
+      case '--double-next':
+        (arrNew[i + 1]) ? result.push(arrNew[i + 1]) : null;
+        break;
+      case '--double-prev':
+        (arrNew[i - 1]) ? result.push(arrNew[i - 1]) : null;
+        break;
+      case '--discard-next':
+        arrNew.splice(i + 1, 1);
+        i++;
+        break;
+      case '--discard-prev':
+        result.pop();
+        break;
+      default:
+        result.push(arrNew[i]);
+        break;
     }
   }
-
-  throw new TypeError("'arr' parameter must be an instance of the Array!");
+  return result;
 }
 
 module.exports = {

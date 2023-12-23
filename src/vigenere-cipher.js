@@ -20,13 +20,63 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(type = true) {
+    this.type = (type === true) ? 'direct' : 'reverse';
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) throw Error("Incorrect arguments!");
+
+    let messageNew = '';
+    let alphFirstInd = 65;
+    let j = 0;
+
+    for (let i = 0; i < message.length; i++) {
+      let charMes = message.toUpperCase()[i].charCodeAt() - alphFirstInd,
+        charKey = key.toUpperCase()[j].charCodeAt() - alphFirstInd,
+        charNew = (charMes + charKey) % 26;
+      
+      if ((charMes >= 0) && (charMes < 26)) {
+        messageNew += String.fromCharCode(charNew + alphFirstInd);
+        j++;
+      } else {
+        messageNew += message[i];
+      }
+
+      if (j >= key.length) j = 0;
+    }
+
+    return (this.type === 'direct') ? messageNew : messageNew.split('').reverse().join('');
+  }
+  decrypt(message, key) {
+    if (!message || !key) throw Error("Incorrect arguments!");
+
+    let messageNew = '';
+    let alphFirstInd = 65;
+    let j = 0;
+
+    for (let i = 0; i < message.length; i++) {
+      let charMes = message.toUpperCase()[i].charCodeAt() - alphFirstInd,
+        charKey = key.toUpperCase()[j].charCodeAt() - alphFirstInd,
+        charNew = (charMes - charKey) % 26;
+
+      if (charNew > 0) {
+        charNew = charNew % 26;
+      } else {
+        charNew = (charNew + 26) % 26;
+      }
+
+      if ((charMes >= 0) && (charMes < 26)) {
+        messageNew += String.fromCharCode(charNew + alphFirstInd);
+        j++;
+      } else {
+        messageNew += message[i];
+      }
+
+      if (j >= key.length) j = 0;
+    }
+
+    return (this.type === 'direct') ? messageNew : messageNew.split('').reverse().join('');
   }
 }
 
